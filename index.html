@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEC 61850 SCADA Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 1%;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #ffd700;
+            text-align: center;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 1%;
+            margin-bottom: 1%;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .nav-tabs::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 2px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        
+        .tab-btn.active {
+            background: #ffd700;
+            color: #1e3c72;
+            font-weight: 600;
+            border-color: #ffd700;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            margin-bottom: 1%;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h2 {
+            font-size: 1.1em;
+            color: #ffd700;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 5px;
+        }
+        
+        h3 {
+            font-size: 1em;
+            color: #ffeb99;
+            margin: 10px 0 6px 0;
+        }
+        
+        p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+        
+        li {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .protocol-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 3px solid #ffd700;
+        }
+        
+        .protocol-card h3 {
+            margin-top: 0;
+        }
+        
+        .info-box {
+            background: rgba(255, 215, 0, 0.2);
+            border-left: 3px solid #ffd700;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background: rgba(255, 140, 0, 0.2);
+            border-left: 3px solid #ff8c00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.85em;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background: rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .quick-ref {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .quick-ref-item {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+        
+        .quick-ref-item strong {
+            display: block;
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+        
+        .quick-ref-item span {
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IEC 61850 SCADA System Guide</h1>
+        </header>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('beginner')">Beginner</button>
+            <button class="tab-btn" onclick="showTab('overview')">Overview</button>
+            <button class="tab-btn" onclick="showTab('protocols')">Protocols</button>
+            <button class="tab-btn" onclick="showTab('architecture')">Architecture</button>
+            <button class="tab-btn" onclick="showTab('data')">Data Models</button>
+            <button class="tab-btn" onclick="showTab('services')">Services</button>
+            <button class="tab-btn" onclick="showTab('implementation')">Implementation</button>
+            <button class="tab-btn" onclick="showTab('scenarios')">Scenarios</button>
+        </div>
+        
+        <!-- Beginner's Guide Tab -->
+        <div id="beginner" class="tab-content active">
+            <div class="section">
+                <h2>Welcome to IEC 61850</h2>
+                <p>This guide will help you understand IEC 61850 from the ground up, even if you're completely new to substation automation.</p>
+                
+                <div class="info-box">
+                    <strong>What is IEC 61850?</strong> Think of it as a universal language that allows different electrical equipment in a substation to talk to each other, regardless of who made them.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Why IEC 61850 Exists</h2>
+                
+                <h3>The Old Way (Before IEC 61850)</h3>
+                <ul>
+                    <li>Every manufacturer had their own communication protocol</li>
+                    <li>Miles of copper wiring between devices</li>
+                    <li>Difficult to integrate equipment from different vendors</li>
+                    <li>Expensive modifications and upgrades</li>
+                    <li>Limited monitoring and diagnostic capabilities</li>
+                </ul>
+                
+                <h3>The New Way (With IEC 61850)</h3>
+                <ul>
+                    <li>Single standard protocol for all devices</li>
+                    <li>Ethernet-based network communication</li>
+                    <li>Vendor-independent interoperability</li>
+                    <li>Easier configuration and maintenance</li>
+                    <li>Advanced monitoring and control features</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Key Concepts Explained Simply</h2>
+                
+                <div class="protocol-card">
+                    <h3>What is a Substation?</h3>
+                    <p>A facility where voltage is transformed and electrical power is switched between transmission lines. Think of it as a major intersection for electricity.</p>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>What is SCADA?</h3>
+                    <p>Supervisory Control and Data Acquisition - the computer system that monitors and controls the substation remotely. Like a control tower for electricity.</p>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>What is an IED?</h3>
+                    <p>Intelligent Electronic Device - smart devices like protection relays, circuit breaker controllers, or meters. These are the "workers" that do specific jobs in the substation.</p>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>What are Logical Nodes?</h3>
+                    <p>Standard building blocks representing functions. Example: XCBR represents a circuit breaker. Think of them as standardized job descriptions that every manufacturer understands.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Learning Path for Beginners</h2>
+                
+                <h3>Week 1-2: Foundations</h3>
+                <ol>
+                    <li>Understand basic electrical substation components</li>
+                    <li>Learn about circuit breakers, transformers, and protection</li>
+                    <li>Familiarize with Ethernet networking basics</li>
+                    <li>Study the IEC 61850 standard overview</li>
+                </ol>
+                
+                <h3>Week 3-4: Data Models</h3>
+                <ol>
+                    <li>Learn the hierarchy: Server → LD → LN → DO → DA</li>
+                    <li>Study common logical nodes (XCBR, MMXU, PDIS)</li>
+                    <li>Understand data attributes and common data classes</li>
+                    <li>Practice reading IEC 61850 addresses</li>
+                </ol>
+                
+                <h3>Week 5-6: Communication</h3>
+                <ol>
+                    <li>Understand MMS for client-server communication</li>
+                    <li>Learn GOOSE for fast peer-to-peer messaging</li>
+                    <li>Study Sampled Values for analog measurements</li>
+                    <li>Explore reporting mechanisms</li>
+                </ol>
+                
+                <h3>Week 7-8: Hands-On</h3>
+                <ol>
+                    <li>Work with SCL configuration files</li>
+                    <li>Use IED configuration tools</li>
+                    <li>Practice with network analyzers (Wireshark)</li>
+                    <li>Try simple GOOSE communication setup</li>
+                </ol>
+            </div>
+            
+            <div class="section">
+                <h2>Common Beginner Mistakes</h2>
+                
+                <div class="warning-box">
+                    <h3>Mistake #1: Confusing Logical vs Physical</h3>
+                    <p>IEC 61850 describes logical functions, not physical devices. One physical device can have multiple logical nodes, and one function can span multiple devices.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Mistake #2: Ignoring Time Synchronization</h3>
+                    <p>Many functions (especially GOOSE and SV) require accurate time sync. Always verify PTP or time synchronization is working correctly.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Mistake #3: Overlooking Network Design</h3>
+                    <p>IEC 61850 is sensitive to network quality. Proper switch configuration, VLANs, and QoS are critical for reliable operation.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Mistake #4: Not Testing Thoroughly</h3>
+                    <p>Always test communication paths, GOOSE subscriptions, and reporting before commissioning. Use simulators and test sets.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Essential Terminology Glossary</h2>
+                
+                <table>
+                    <tr>
+                        <th>Term</th>
+                        <th>Simple Explanation</th>
+                    </tr>
+                    <tr>
+                        <td>Bay</td>
+                        <td>A section of substation with one circuit breaker and its associated equipment</td>
+                    </tr>
+                    <tr>
+                        <td>Dataset</td>
+                        <td>A group of data points bundled together for efficient transmission</td>
+                    </tr>
+                    <tr>
+                        <td>RCB</td>
+                        <td>Report Control Block - configuration that defines what data to report and when</td>
+                    </tr>
+                    <tr>
+                        <td>GCB</td>
+                        <td>GOOSE Control Block - configuration for publishing GOOSE messages</td>
+                    </tr>
+                    <tr>
+                        <td>Merging Unit</td>
+                        <td>Device that converts analog CT/VT signals to digital Sampled Values</td>
+                    </tr>
+                    <tr>
+                        <td>Multicast</td>
+                        <td>Sending one message that multiple devices can receive simultaneously</td>
+                    </tr>
+                    <tr>
+                        <td>Subscriber</td>
+                        <td>Device that receives and uses GOOSE or SV messages</td>
+                    </tr>
+                    <tr>
+                        <td>Publisher</td>
+                        <td>Device that sends out GOOSE or SV messages</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>Quick Start Checklist</h2>
+                
+                <h3>Prerequisites You Need</h3>
+                <ul>
+                    <li>✓ Basic understanding of electrical power systems</li>
+                    <li>✓ Familiarity with computer networks and Ethernet</li>
+                    <li>✓ Knowledge of IP addressing and TCP/IP</li>
+                    <li>✓ Understanding of XML file format basics</li>
+                </ul>
+                
+                <h3>Tools You'll Need</h3>
+                <ul>
+                    <li>IED configuration software (vendor-specific)</li>
+                    <li>SCL file editor/validator</li>
+                    <li>Network analyzer (Wireshark with IEC 61850 plugins)</li>
+                    <li>IEC 61850 client/test tool</li>
+                    <li>Documentation: IEC 61850 standard parts 1-10</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Understanding IEC 61850 Addresses</h2>
+                
+                <h3>Address Structure</h3>
+                <div class="code-block">
+IED_Name / LD_Name / LN_Class + Instance . DO_Name . DA_Name
+
+Example:
+BAY1_PROT / PROTECTION / XCBR1 . Pos . stVal
+                </div>
+                
+                <h3>Breaking It Down</h3>
+                <ul>
+                    <li><strong>BAY1_PROT:</strong> Physical device name (protection relay in Bay 1)</li>
+                    <li><strong>PROTECTION:</strong> Logical device (group of related functions)</li>
+                    <li><strong>XCBR1:</strong> Circuit breaker logical node, instance 1</li>
+                    <li><strong>Pos:</strong> Position data object</li>
+                    <li><strong>stVal:</strong> Status value attribute (on/off)</li>
+                </ul>
+                
+                <div class="info-box">
+                    <strong>Think of it like:</strong> Building / Floor / Room + Number . Furniture . Property<br>
+                    Example: Hospital / ICU / Bed3 . Monitor . HeartRate
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Your First IEC 61850 Project</h2>
+                
+                <h3>Simple Exercise: Circuit Breaker Monitoring</h3>
+                <ol>
+                    <li><strong>Goal:</strong> Read circuit breaker position status</li>
+                    <li><strong>What you need:</strong> IEC 61850 client tool, IED simulator</li>
+                    <li><strong>Steps:</strong>
+                        <ul>
+                            <li>Connect to IED using MMS (IP address, port 102)</li>
+                            <li>Browse logical device directory</li>
+                            <li>Find XCBR logical node</li>
+                            <li>Read Pos.stVal attribute</li>
+                            <li>Observe changes when position changes</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <div class="info-box">
+                    <strong>Success Criteria:</strong> You can see the circuit breaker position (open/closed) update in real-time on your client tool.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Resources for Learning</h2>
+                
+                <h3>Official Documentation</h3>
+                <ul>
+                    <li>IEC 61850 standard documents (parts 1-10)</li>
+                    <li>UCA International Users Group materials</li>
+                    <li>IEEE standards for power systems</li>
+                </ul>
+                
+                <h3>Practical Learning</h3>
+                <ul>
+                    <li>Vendor training programs (Siemens, ABB, GE, SEL)</li>
+                    <li>Online courses and webinars</li>
+                    <li>IEC 61850 simulators and test tools</li>
+                    <li>Community forums and discussion groups</li>
+                </ul>
+                
+                <h3>Hands-On Experience</h3>
+                <ul>
+                    <li>Laboratory setups with real IEDs</li>
+                    <li>Virtual commissioning tools</li>
+                    <li>Internships at utilities or system integrators</li>
+                    <li>Participation in commissioning projects</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content">
+            <div class="section">
+                <h2>IEC 61850 Standard Overview</h2>
+                <p>IEC 61850 is an international standard defining communication protocols for intelligent electronic devices (IEDs) at electrical substations. It enables interoperability between devices from different manufacturers.</p>
+                
+                <div class="info-box">
+                    <strong>Key Benefit:</strong> Vendor-independent interoperability for substation automation systems.
+                </div>
+                
+                <h3>Standard Structure</h3>
+                <div class="quick-ref">
+                    <div class="quick-ref-item">
+                        <strong>Part 1-5</strong>
+                        <span>Introduction & Requirements</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 6-9</strong>
+                        <span>Configuration & Testing</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 7-1</strong>
+                        <span>Communication Basics</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 7-2</strong>
+                        <span>ACSI Services</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 7-3</strong>
+                        <span>CDC Models</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 7-4</strong>
+                        <span>Logical Nodes</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 8-1</strong>
+                        <span>MMS Mapping</span>
+                    </div>
+                    <div class="quick-ref-item">
+                        <strong>Part 9-2</strong>
+                        <span>GOOSE/SV</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Core Concepts</h2>
+                
+                <h3>Logical Nodes (LN)</h3>
+                <p>Smallest functional units representing specific functions like circuit breaker control, protection, or measurement.</p>
+                
+                <h3>Data Objects & Attributes</h3>
+                <p>Each logical node contains data objects (DO) which contain data attributes (DA). Example hierarchy: XCBR1.Pos.stVal</p>
+                
+                <h3>Common Data Classes (CDC)</h3>
+                <p>Standardized templates defining structure and behavior of data objects.</p>
+                
+                <div class="info-box">
+                    <strong>Naming Convention:</strong> IED_Name/LD_Name/LN_Class+Instance.DO_Name.DA_Name
+                </div>
+            </div>
+        </div>
+        
+        <!-- Protocols Tab -->
+        <div id="protocols" class="tab-content">
+            <div class="section">
+                <h2>Communication Protocols</h2>
+                
+                <div class="protocol-card">
+                    <h3>MMS (Manufacturing Message Specification)</h3>
+                    <p><strong>Protocol:</strong> ISO 9506 mapped to IEC 61850-8-1</p>
+                    <p><strong>Use Case:</strong> Client-server communication for monitoring and control</p>
+                    <p><strong>Layer:</strong> Application layer over TCP/IP</p>
+                    <p><strong>Port:</strong> TCP 102</p>
+                    <ul>
+                        <li>Request-response communication</li>
+                        <li>Supports reporting, control, setting groups</li>
+                        <li>Typical latency: 10-100ms</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>GOOSE (Generic Object Oriented Substation Event)</h3>
+                    <p><strong>Protocol:</strong> IEC 61850-8-1 / IEC 61850-9-2</p>
+                    <p><strong>Use Case:</strong> Fast peer-to-peer event messaging</p>
+                    <p><strong>Layer:</strong> Direct Ethernet Layer 2 (multicast)</p>
+                    <p><strong>EtherType:</strong> 0x88B8</p>
+                    <ul>
+                        <li>Publish-subscribe model</li>
+                        <li>Transmission time: <4ms (Class P1)</li>
+                        <li>Retransmission mechanism for reliability</li>
+                        <li>Used for trip signals, interlocking</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>SV (Sampled Values)</h3>
+                    <p><strong>Protocol:</strong> IEC 61850-9-2 (Process Bus)</p>
+                    <p><strong>Use Case:</strong> Real-time analog measurements</p>
+                    <p><strong>Layer:</strong> Direct Ethernet Layer 2 (multicast)</p>
+                    <p><strong>EtherType:</strong> 0x88BA</p>
+                    <ul>
+                        <li>80 or 256 samples per cycle (50/60Hz)</li>
+                        <li>Replaces copper CT/VT wiring</li>
+                        <li>Time synchronization critical (IEEE 1588)</li>
+                        <li>Typical rate: 4-14 kHz sampling</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>Time Synchronization</h3>
+                    <p><strong>Primary:</strong> IEEE 1588 PTPv2 (Precision Time Protocol)</p>
+                    <p><strong>Alternative:</strong> SNTP, IRIG-B</p>
+                    <ul>
+                        <li>Accuracy required: <1μs for process bus</li>
+                        <li>PTP profiles: Power Profile (C37.238)</li>
+                        <li>Grandmaster clock distribution</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Protocol Comparison</h2>
+                <table>
+                    <tr>
+                        <th>Protocol</th>
+                        <th>Speed</th>
+                        <th>Layer</th>
+                        <th>Application</th>
+                    </tr>
+                    <tr>
+                        <td>MMS</td>
+                        <td>10-100ms</td>
+                        <td>Layer 7 (TCP)</td>
+                        <td>SCADA, Control</td>
+                    </tr>
+                    <tr>
+                        <td>GOOSE</td>
+                        <td><4ms</td>
+                        <td>Layer 2 (Ethernet)</td>
+                        <td>Protection Events</td>
+                    </tr>
+                    <tr>
+                        <td>SV</td>
+                        <td><250μs</td>
+                        <td>Layer 2 (Ethernet)</td>
+                        <td>Current/Voltage Sampling</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Architecture Tab -->
+        <div id="architecture" class="tab-content">
+            <div class="section">
+                <h2>System Architecture Levels</h2>
+                
+                <h3>Station Level</h3>
+                <p>SCADA systems, HMI, gateways, engineering workstations</p>
+                <ul>
+                    <li>MMS client-server communication</li>
+                    <li>Historical data logging</li>
+                    <li>Remote access and control</li>
+                </ul>
+                
+                <h3>Bay Level</h3>
+                <p>IEDs for protection, control, and monitoring per bay</p>
+                <ul>
+                    <li>GOOSE for interlocking</li>
+                    <li>MMS for SCADA integration</li>
+                    <li>Local HMI interfaces</li>
+                </ul>
+                
+                <h3>Process Level</h3>
+                <p>Sensors, actuators, merging units, circuit breakers</p>
+                <ul>
+                    <li>Sampled Values (SV) for analog</li>
+                    <li>GOOSE for digital I/O</li>
+                    <li>Process bus communication</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Network Architecture</h2>
+                
+                <h3>Station Bus</h3>
+                <p>Connects station level to bay level devices</p>
+                <ul>
+                    <li>Ethernet switches (managed)</li>
+                    <li>VLAN segmentation recommended</li>
+                    <li>Redundancy: PRP, HSR protocols</li>
+                </ul>
+                
+                <h3>Process Bus</h3>
+                <p>Connects bay level to process level</p>
+                <ul>
+                    <li>High-speed deterministic network</li>
+                    <li>Time synchronization critical</li>
+                    <li>Typically separate physical network</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Security Note:</strong> IEC 62351 provides security extensions including authentication, encryption, and access control for IEC 61850 communications.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Redundancy Protocols</h2>
+                
+                <div class="protocol-card">
+                    <h3>PRP (Parallel Redundancy Protocol)</h3>
+                    <p>IEC 62439-3 Clause 4</p>
+                    <ul>
+                        <li>Dual network transmission</li>
+                        <li>Zero switchover time</li>
+                        <li>Requires dual network interfaces</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>HSR (High-availability Seamless Redundancy)</h3>
+                    <p>IEC 62439-3 Clause 5</p>
+                    <ul>
+                        <li>Ring topology redundancy</li>
+                        <li>Zero recovery time</li>
+                        <li>Single ring or coupled rings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Models Tab -->
+        <div id="data" class="tab-content">
+            <div class="section">
+                <h2>Data Modeling Hierarchy</h2>
+                
+                <div class="code-block">
+Server (IED)
+ └── Logical Device (LD)
+      └── Logical Node (LN)
+           └── Data Object (DO)
+                └── Data Attribute (DA)
+                </div>
+                
+                <h3>Example Structure</h3>
+                <div class="code-block">
+IED: BAY1_PROT
+ ├── LD: PROTECTION
+ │    ├── LN: XCBR1 (Circuit Breaker)
+ │    │    ├── DO: Pos (Position)
+ │    │    │    ├── DA: stVal (status value)
+ │    │    │    ├── DA: q (quality)
+ │    │    │    └── DA: t (timestamp)
+ │    │    └── DO: BlkOpn (Block Opening)
+ │    └── LN: PDIS1 (Distance Protection)
+ └── LD: MEASUREMENT
+      └── LN: MMXU1 (Measurement)
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Common Logical Node Classes</h2>
+                
+                <table>
+                    <tr>
+                        <th>LN Class</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                    </tr>
+                    <tr>
+                        <td>XCBR</td>
+                        <td>Circuit Breaker</td>
+                        <td>Switchgear</td>
+                    </tr>
+                    <tr>
+                        <td>XSWI</td>
+                        <td>Switch</td>
+                        <td>Switchgear</td>
+                    </tr>
+                    <tr>
+                        <td>CSWI</td>
+                        <td>Switch Controller</td>
+                        <td>Control</td>
+                    </tr>
+                    <tr>
+                        <td>CILO</td>
+                        <td>Interlocking</td>
+                        <td>Control</td>
+                    </tr>
+                    <tr>
+                        <td>PDIS</td>
+                        <td>Distance Protection</td>
+                        <td>Protection</td>
+                    </tr>
+                    <tr>
+                        <td>PTUV</td>
+                        <td>Undervoltage Protection</td>
+                        <td>Protection</td>
+                    </tr>
+                    <tr>
+                        <td>MMXU</td>
+                        <td>Measurement</td>
+                        <td>Measurement</td>
+                    </tr>
+                    <tr>
+                        <td>MSQI</td>
+                        <td>Sequence/Imbalance</td>
+                        <td>Measurement</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>Common Data Classes (CDC)</h2>
+                
+                <h3>Status Information</h3>
+                <ul>
+                    <li><strong>SPS:</strong> Single Point Status</li>
+                    <li><strong>DPS:</strong> Double Point Status</li>
+                    <li><strong>INS:</strong> Integer Status</li>
+                    <li><strong>ACT:</strong> Activity</li>
+                </ul>
+                
+                <h3>Measured Values</h3>
+                <ul>
+                    <li><strong>MV:</strong> Measured Value</li>
+                    <li><strong>CMV:</strong> Complex Measured Value</li>
+                    <li><strong>SAV:</strong> Sampled Analog Value</li>
+                    <li><strong>WYE:</strong> Three-phase values</li>
+                </ul>
+                
+                <h3>Control</h3>
+                <ul>
+                    <li><strong>SPC:</strong> Single Point Control</li>
+                    <li><strong>DPC:</strong> Double Point Control</li>
+                    <li><strong>INC:</strong> Integer Control</li>
+                    <li><strong>APC:</strong> Analog Process Control</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Data Attributes</h2>
+                
+                <table>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                    </tr>
+                    <tr>
+                        <td>stVal</td>
+                        <td>Status Value</td>
+                        <td>Various</td>
+                    </tr>
+                    <tr>
+                        <td>q</td>
+                        <td>Quality</td>
+                        <td>Quality flags</td>
+                    </tr>
+                    <tr>
+                        <td>t</td>
+                        <td>Timestamp</td>
+                        <td>UTC Time</td>
+                    </tr>
+                    <tr>
+                        <td>ctlVal</td>
+                        <td>Control Value</td>
+                        <td>Boolean/Int</td>
+                    </tr>
+                    <tr>
+                        <td>mag</td>
+                        <td>Magnitude</td>
+                        <td>Analog</td>
+                    </tr>
+                    <tr>
+                        <td>angRef</td>
+                        <td>Angle Reference</td>
+                        <td>Enum</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Services Tab -->
+        <div id="services" class="tab-content">
+            <div class="section">
+                <h2>ACSI Services</h2>
+                <p>Abstract Communication Service Interface - defines services independent of protocols</p>
+                
+                <h3>Association Model</h3>
+                <ul>
+                    <li><strong>Associate:</strong> Establish connection</li>
+                    <li><strong>Release:</strong> Normal disconnect</li>
+                    <li><strong>Abort:</strong> Emergency disconnect</li>
+                </ul>
+                
+                <h3>Server Model</h3>
+                <ul>
+                    <li><strong>GetServerDirectory:</strong> List logical devices</li>
+                    <li><strong>GetLogicalDeviceDirectory:</strong> List logical nodes</li>
+                    <li><strong>GetLogicalNodeDirectory:</strong> List data objects</li>
+                    <li><strong>GetDataDirectory:</strong> List data attributes</li>
+                    <li><strong>GetDataDefinition:</strong> Get attribute definitions</li>
+                </ul>
+                
+                <h3>Data Access</h3>
+                <ul>
+                    <li><strong>GetDataValues:</strong> Read data attributes</li>
+                    <li><strong>SetDataValues:</strong> Write data attributes</li>
+                    <li><strong>GetDataSetValues:</strong> Read dataset</li>
+                    <li><strong>SetDataSetValues:</strong> Write dataset</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Control Services</h2>
+                
+                <h3>Control Models</h3>
+                <div class="protocol-card">
+                    <h3>Direct Control</h3>
+                    <p>Simple execute without feedback</p>
+                    <ul>
+                        <li>Fastest method</li>
+                        <li>No acknowledgment</li>
+                        <li>Used for non-critical commands</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>SBO (Select Before Operate)</h3>
+                    <p>Two-step control with selection</p>
+                    <ul>
+                        <li>Select command + Operate command</li>
+                        <li>Prevents simultaneous control</li>
+                        <li>Timeout mechanism (default 30s)</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>Enhanced Security</h3>
+                <p>SBO with additional security</p>
+                    <ul>
+                        <li>Time synchronization check</li>
+                        <li>Operator identification</li>
+                        <li>Digital signatures (IEC 62351)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Reporting Services</h2>
+                
+                <h3>Report Control Blocks (RCB)</h3>
+                <p>Two types: Buffered (BRCB) and Unbuffered (URCB)</p>
+                
+                <h3>Buffered Reports (BRCB)</h3>
+                <ul>
+                    <li>Store events when client disconnected</li>
+                    <li>Persistent across power cycles</li>
+                    <li>Used for critical event logging</li>
+                </ul>
+                
+                <h3>Unbuffered Reports (URCB)</h3>
+                <ul>
+                    <li>Real-time reporting only</li>
+                    <li>No storage when disconnected</li>
+                    <li>Used for continuous monitoring</li>
+                </ul>
+                
+                <h3>Trigger Options</h3>
+                <ul>
+                    <li><strong>Data Change (dchg):</strong> Value changed</li>
+                    <li><strong>Quality Change (qchg):</strong> Quality flag changed</li>
+                    <li><strong>Data Update (dupd):</strong> Periodic update</li>
+                    <li><strong>Integrity:</strong> Complete scan</li>
+                    <li><strong>General Interrogation (GI):</strong> On demand scan</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Other Services</h2>
+                
+                <h3>Logging</h3>
+                <ul>
+                    <li>Sequence of Events (SOE)</li>
+                    <li>Disturbance recording</li>
+                    <li>QueryLogByTime, QueryLogAfter</li>
+                    <li>GetLogStatusValues</li>
+                </ul>
+                
+                <h3>Setting Groups</h3>
+                <ul>
+                    <li>Multiple configuration sets</li>
+                    <li>SelectActiveSG, SelectEditSG</li>
+                    <li>SetSGValues, GetSGValues</li>
+                    <li>ConfirmEditSGValues</li>
+                </ul>
+                
+                <h3>File Transfer</h3>
+                <ul>
+                    <li>GetFile, SetFile</li>
+                    <li>DeleteFile, GetFileAttributeValues</li>
+                    <li>Used for disturbance records</li>
+                    <li>Configuration file exchange</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Implementation Tab -->
+        <div id="implementation" class="tab-content">
+            <div class="section">
+                <h2>Configuration Files</h2>
+                
+                <h3>SCL (Substation Configuration Language)</h3>
+                <p>XML-based configuration files (IEC 61850-6)</p>
+                
+                <h3>File Types</h3>
+                <ul>
+                    <li><strong>SSD:</strong> System Specification Description</li>
+                    <li><strong>SCD:</strong> Substation Configuration Description</li>
+                    <li><strong>ICD:</strong> IED Capability Description</li>
+                    <li><strong>CID:</strong> Configured IED Description</li>
+                    <li><strong>IID:</strong> Instantiated IED Description</li>
+                    <li><strong>SED:</strong> System Exchange Description</li>
+                </ul>
+                
+                <div class="info-box">
+                    <strong>Workflow:</strong> System design → IED configuration → Testing → Commissioning
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Engineering Process</h2>
+                
+                <h3>Phase 1: System Design</h3>
+                <ol>
+                    <li>Define single-line diagram</li>
+                    <li>Specify functions and protection</li>
+                    <li>Create SSD file</li>
+                    <li>Allocate functions to IEDs</li>
+                </ol>
+                
+                <h3>Phase 2: Configuration</h3>
+                <ol>
+                    <li>Import ICD files from vendors</li>
+                    <li>Configure datasets and reports</li>
+                    <li>Map GOOSE and SV publishers/subscribers</li>
+                    <li>Generate SCD file</li>
+                </ol>
+                
+                <h3>Phase 3: Testing</h3>
+                <ol>
+                    <li>Virtual commissioning with simulators</li>
+                    <li>Point-to-point testing</li>
+                    <li>End-to-end functional tests</li>
+                    <li>Performance verification</li>
+                </ol>
+                
+                <h3>Phase 4: Commissioning</h3>
+                <ol>
+                    <li>Download CID files to IEDs</li>
+                    <li>Verify communication paths</li>
+                    <li>Test time synchronization</li>
+                    <li>Final acceptance testing</li>
+                </ol>
+            </div>
+            
+            <div class="section">
+                <h2>Testing Tools</h2>
+                
+                <h3>IED Configuration</h3>
+                <ul>
+                    <li>SCL validator tools</li>
+                    <li>IED configuration software</li>
+                    <li>Network analyzers (Wireshark)</li>
+                    <li>GOOSE/SV test sets</li>
+                </ul>
+                
+                <h3>Protocol Testing</h3>
+                <ul>
+                    <li>MMS client simulators</li>
+                    <li>GOOSE publishers/subscribers</li>
+                    <li>SV signal generators</li>
+                    <li>IEC 61850 conformance testing</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Best Practices</h2>
+                
+                <h3>Network Design</h3>
+                <ul>
+                    <li>Separate VLANs for different traffic types</li>
+                    <li>QoS priority for GOOSE and SV</li>
+                    <li>Managed switches with IGMP snooping</li>
+                    <li>Network redundancy (PRP/HSR)</li>
+                </ul>
+                
+                <h3>Time Synchronization</h3>
+                <ul>
+                    <li>Use redundant grandmaster clocks</li>
+                    <li>Monitor PTP synchronization status</li>
+                    <li>Verify boundary/transparent clock config</li>
+                    <li>Regular accuracy verification</li>
+                </ul>
+                
+                <h3>Security</h3>
+                <ul>
+                    <li>Implement IEC 62351 security features</li>
+                    <li>Network segmentation and firewalls</li>
+                    <li>Role-based access control</li>
+                    <li>Regular security audits</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Cybersecurity:</strong> Always follow utility security policies and implement defense-in-depth strategies for critical infrastructure protection.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Troubleshooting Guide</h2>
+                
+                <h3>Communication Issues</h3>
+                <ul>
+                    <li>Verify network connectivity (ping tests)</li>
+                    <li>Check switch port configuration</li>
+                    <li>Validate VLAN assignments</li>
+                    <li>Review firewall rules</li>
+                </ul>
+                
+                <h3>GOOSE Problems</h3>
+                <ul>
+                    <li>Check multicast MAC addresses</li>
+                    <li>Verify VLAN ID and priority</li>
+                    <li>Monitor stNum and sqNum counters</li>
+                    <li>Test with network analyzer</li>
+                </ul>
+                
+                <h3>Time Sync Issues</h3>
+                <ul>
+                    <li>Verify PTP grandmaster status</li>
+                    <li>Check clock accuracy metrics</li>
+                    <li>Review switch PTP support</li>
+                    <li>Monitor time synchronization logs</li>
+                </ul>
+                
+                <h3>Data Quality</h3>
+                <ul>
+                    <li>Check quality flags (validity bits)</li>
+                    <li>Verify data source configuration</li>
+                    <li>Review timestamp accuracy</li>
+                    <li>Monitor communication timeouts</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Quick Reference</h2>
+                
+                <h3>Key Port Numbers</h3>
+                <table>
+                    <tr>
+                        <th>Protocol</th>
+                        <th>Port/Type</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td>MMS</td>
+                        <td>TCP 102</td>
+                        <td>OSI/MMS stack</td>
+                    </tr>
+                    <tr>
+                        <td>GOOSE</td>
+                        <td>0x88B8</td>
+                        <td>EtherType</td>
+                    </tr>
+                    <tr>
+                        <td>SV</td>
+                        <td>0x88BA</td>
+                        <td>EtherType</td>
+                    </tr>
+                    <tr>
+                        <td>PTP</td>
+                        <td>UDP 319/320</td>
+                        <td>Event/General</td>
+                    </tr>
+                </table>
+                
+                <h3>Performance Classes</h3>
+                <table>
+                    <tr>
+                        <th>Class</th>
+                        <th>Transfer Time</th>
+                        <th>Application</th>
+                    </tr>
+                    <tr>
+                        <td>P1</td>
+                        <td>3ms</td>
+                        <td>Fast protection</td>
+                    </tr>
+                    <tr>
+                        <td>P2</td>
+                        <td>20ms</td>
+                        <td>Normal protection</td>
+                    </tr>
+                    <tr>
+                        <td>P3</td>
+                        <td>100ms</td>
+                        <td>Slow protection</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Real World Scenarios Tab -->
+        <div id="scenarios" class="tab-content">
+            <div class="section">
+                <h2>Real World Implementation Scenarios</h2>
+                <p>Practical examples from actual substation automation projects.</p>
+            </div>
+            
+            <div class="section">
+                <h2>Scenario 1: Transmission Substation Upgrade</h2>
+                
+                <h3>Project Overview</h3>
+                <div class="info-box">
+                    <strong>Client:</strong> Regional utility company<br>
+                    <strong>Scope:</strong> 230kV substation with 8 bays<br>
+                    <strong>Challenge:</strong> Replace aging hardwired protection system with IEC 61850
+                </div>
+                
+                <h3>System Architecture</h3>
+                <ul>
+                    <li><strong>Station Level:</strong> SCADA gateway, engineering workstation, time server</li>
+                    <li><strong>Bay Level:</strong> Protection IEDs (distance, differential, overcurrent)</li>
+                    <li><strong>Process Level:</strong> Merging units for CT/VT digitization</li>
+                    <li><strong>Network:</strong> Dual redundant Ethernet (PRP) with managed switches</li>
+                </ul>
+                
+                <h3>Key GOOSE Applications</h3>
+                <div class="protocol-card">
+                    <h3>Breaker Failure Protection</h3>
+                    <p>When a circuit breaker fails to open on command, adjacent breakers must trip quickly.</p>
+                    <ul>
+                        <li>Protection relay publishes trip command via GOOSE</li>
+                        <li>Breaker controller subscribes and operates breaker</li>
+                        <li>If breaker doesn't open, failure GOOSE sent to adjacent bays</li>
+                        <li>Total operation time: <50ms</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>Interlocking Scheme</h3>
+                    <p>Prevents unsafe operations like closing a grounded disconnect switch.</p>
+                    <ul>
+                        <li>Each bay publishes equipment status via GOOSE</li>
+                        <li>Bay controllers subscribe to relevant status signals</li>
+                        <li>Logic prevents operations that violate safety rules</li>
+                        <li>Replaced 50+ hardwired signals with GOOSE messages</li>
+                    </ul>
+                </div>
+                
+                <h3>Lessons Learned</h3>
+                <ul>
+                    <li>✓ Network design is critical - invest in quality switches</li>
+                    <li>✓ Time synchronization must be verified before SV commissioning</li>
+                    <li>✓ Thorough documentation of GOOSE subscriptions is essential</li>
+                    <li>✓ Allow extra time for vendor coordination and testing</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Scenario 2: Solar Farm Integration</h2>
+                
+                <h3>Project Overview</h3>
+                <div class="info-box">
+                    <strong>Client:</strong> Renewable energy developer<br>
+                    <strong>Scope:</strong> 50MW solar farm with battery storage<br>
+                    <strong>Challenge:</strong> Integrate with utility SCADA system using IEC 61850
+                </div>
+                
+                <h3>System Components</h3>
+                <ul>
+                    <li>Solar inverter controllers (IEC 61850 compliant)</li>
+                    <li>Battery management system (BMS) gateway</li>
+                    <li>Point of interconnection (POI) protection</li>
+                    <li>Weather monitoring station</li>
+                    <li>SCADA gateway to utility control center</li>
+                </ul>
+                
+                <h3>Data Points Exchanged</h3>
+                <table>
+                    <tr>
+                        <th>Category</th>
+                        <th>Parameters</th>
+                        <th>Update Rate</th>
+                    </tr>
+                    <tr>
+                        <td>Generation</td>
+                        <td>MW, MVAR, voltage, current</td>
+                        <td>1-5 seconds</td>
+                    </tr>
+                    <tr>
+                        <td>Battery</td>
+                        <td>SOC, charge/discharge rate, status</td>
+                        <td>5 seconds</td>
+                    </tr>
+                    <tr>
+                        <td>Protection</td>
+                        <td>Trip signals, alarms, breaker status</td>
+                        <td>GOOSE (immediate)</td>
+                    </tr>
+                    <tr>
+                        <td>Weather</td>
+                        <td>Irradiance, temp, wind speed</td>
+                        <td>1 minute</td>
+                    </tr>
+                </table>
+                
+                <h3>Implementation Details</h3>
+                <ul>
+                    <li>Used MMS for periodic data reporting to SCADA</li>
+                    <li>GOOSE for anti-islanding protection</li>
+                    <li>Custom logical nodes for battery storage (IEC 61850-7-420)</li>
+                    <li>Gateway protocol conversion from Modbus to IEC 61850</li>
+                </ul>
+                
+                <h3>Challenges Overcome</h3>
+                <ul>
+                    <li>Multiple inverter vendors with varying IEC 61850 support</li>
+                    <li>Dynamic power output requiring frequent updates</li>
+                    <li>Cybersecurity requirements (IEC 62351 TLS)</li>
+                    <li>Coordination with utility protection settings</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Scenario 3: Distribution Automation</h2>
+                
+                <h3>Project Overview</h3>
+                <div class="info-box">
+                    <strong>Client:</strong> Municipal utility<br>
+                    <strong>Scope:</strong> Smart grid initiative covering 200 distribution feeders<br>
+                    <strong>Challenge:</strong> Automated fault detection and self-healing network
+                </div>
+                
+                <h3>System Architecture</h3>
+                <ul>
+                    <li>Automated reclosers at feeder heads</li>
+                    <li>Sectionalizing switches along feeders</li>
+                    <li>Fault passage indicators</li>
+                    <li>Distributed Energy Resources (DER) controllers</li>
+                    <li>Central Distribution Management System (DMS)</li>
+                </ul>
+                
+                <h3>Fault Location, Isolation, and Service Restoration (FLISR)</h3>
+                <div class="protocol-card">
+                    <h3>Automated Sequence</h3>
+                    <ol>
+                        <li><strong>Detection:</strong> Recloser detects fault, trips circuit</li>
+                        <li><strong>Communication:</strong> Fault location sent via IEC 61850 to DMS</li>
+                        <li><strong>Isolation:</strong> Switches on both sides of fault receive open commands</li>
+                        <li><strong>Restoration:</strong> Upstream recloser recloses, restoring healthy sections</li>
+                        <li><strong>Alternate Feed:</strong> Downstream sections reconnected via alternate path</li>
+                    </ol>
+                    <p><strong>Result:</strong> Outage time reduced from 45 minutes to <2 minutes for unaffected customers</p>
+                </div>
+                
+                <h3>Communication Infrastructure</h3>
+                <ul>
+                    <li>Fiber optic backbone network</li>
+                    <li>4G LTE cellular backup for remote locations</li>
+                    <li>DNP3 to IEC 61850 gateway at substation</li>
+                    <li>Secure VPN for field device access</li>
+                </ul>
+                
+                <h3>Benefits Realized</h3>
+                <ul>
+                    <li>SAIDI (outage duration) reduced by 40%</li>
+                    <li>SAIFI (outage frequency) reduced by 25%</li>
+                    <li>Crew dispatch time reduced by 60%</li>
+                    <li>Better visibility of DER generation</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Scenario 4: Offshore Wind Farm</h2>
+                
+                <h3>Project Overview</h3>
+                <div class="info-box">
+                    <strong>Client:</strong> Wind energy operator<br>
+                    <strong>Scope:</strong> 100 turbines, 400MW capacity, 20km offshore<br>
+                    <strong>Challenge:</strong> Reliable communication in harsh marine environment
+                </div>
+                
+                <h3>Unique Requirements</h3>
+                <ul>
+                    <li>Redundant fiber optic submarine cables</li>
+                    <li>Environmental monitoring (corrosion, vibration, temperature)</li>
+                    <li>Remote diagnostics to minimize offshore visits</li>
+                    <li>Integration with offshore substation platform</li>
+                </ul>
+                
+                <h3>IEC 61850 Applications</h3>
+                <div class="protocol-card">
+                    <h3>Turbine Integration</h3>
+                    <ul>
+                        <li>Each turbine has IEC 61850 interface at nacelle</li>
+                        <li>Reports: power output, wind speed, blade pitch, yaw position</li>
+                        <li>Controls: start/stop commands, power curtailment</li>
+                        <li>Alarms: vibration, temperature, oil pressure</li>
+                    </ul>
+                </div>
+                
+                <div class="protocol-card">
+                    <h3>Collection System</h3>
+                    <ul>
+                        <li>33kV subsea cables connecting turbine strings</li>
+                        <li>Protection coordination via GOOSE</li>
+                        <li>Fault detection and isolation</li>
+                        <li>String combiner at offshore platform</li>
+                    </ul>
+                </div>
+                
+                <h3>Monitoring & Diagnostics</h3>
+                <ul>
+                    <li>Continuous condition monitoring via IEC 61850 reporting</li>
+                    <li>Predictive maintenance based on vibration analysis</li>
+                    <li>Performance tracking vs. weather data correlation</li>
+                    <li>Remote firmware updates to turbine controllers</li>
+                </ul>
+                
+                <h3>Special Considerations</h3>
+                <ul>
+                    <li>Salt spray and moisture protection for equipment</li>
+                    <li>Lightning protection and grounding challenges</li>
+                    <li>Limited access for maintenance (weather-dependent)</li>
+                    <li>Redundant communication paths (primary + backup fiber)</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Scenario 5: Microgrid Campus</h2>
+                
+                <h3>Project Overview</h3>
+                <div class="info-box">
+                    <strong>Client:</strong> University campus<br>
+                    <strong>Scope:</strong> 5MW solar + 2MW battery + 3MW diesel backup<br>
+                    <strong>Challenge:</strong> Islanded operation during grid outages
+                </div>
+                
+                <h3>Microgrid Controller Functions</h3>
+                <ul>
+                    <li>Energy management system (EMS)</li>
+                    <li>Load shedding priority control</li>
+                    <li>Synchronization for grid reconnection</li>
+                    <li>Economic dispatch optimization</li>
+                </ul>
+                
+                <h3>IEC 61850 Implementation</h3>
+                <div class="protocol-card">
+                    <h3>Island Detection & Transition</h3>
+                    <ol>
+                        <li>Utility grid loss detected by protection relay</li>
+                        <li>GOOSE message broadcasts islanding event</li>
+                        <li>Microgrid controller receives signal within 4ms</li>
+                        <li>Diesel generator starts, synchronizes</li>
+                        <li>PCC breaker opens, isolating from grid</li>
+                        <li>Local generation picks up critical loads</li>
+                        <li>Non-critical loads shed via GOOSE commands</li>
+                    </ol>
+                    <p><strong>Seamless transition time:</strong> <500ms with no interruption to critical loads</p>
+                </div>
+                
+                <h3>Operating Modes</h3>
+                <table>
+                    <tr>
+                        <th>Mode</th>
+                        <th>Grid</th>
+                        <th>Solar</th>
+                        <th>Battery</th>
+                        <th>Diesel</th>
+                    </tr>
+                    <tr>
+                        <td>Grid-Connected</td>
+                        <td>Import/Export</td>
+                        <td>Generate</td>
+                        <td>Peak Shaving</td>
+                        <td>Standby</td>
+                    </tr>
+                    <tr>
+                        <td>Islanded Day</td>
+                        <td>Offline</td>
+                        <td>Generate</td>
+                        <td>Buffer</td>
+                        <td>Backup</td>
+                    </tr>
+                    <tr>
+                        <td>Islanded Night</td>
+                        <td>Offline</td>
+                        <td>Offline</td>
+                        <td>Discharge</td>
+                        <td>Primary</td>
+                    </tr>
+                </table>
+                
+                <h3>Benefits Achieved</h3>
+                <ul>
+                    <li>99.99% power availability for critical research labs</li>
+                    <li>30% reduction in energy costs through peak shaving</li>
+                    <li>Resilience during 4 major grid outages (up to 8 hours)</li>
+                    <li>Real-time energy dashboard for campus community</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Common Implementation Challenges</h2>
+                
+                <h3>Technical Challenges</h3>
+                <div class="warning-box">
+                    <h3>Challenge: GOOSE Message Storms</h3>
+                    <p><strong>Symptom:</strong> Network congestion, delayed messages</p>
+                    <p><strong>Cause:</strong> Too many GOOSE publishers, improper filtering</p>
+                    <p><strong>Solution:</strong> Use VLANs, optimize datasets, implement IGMP snooping</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Challenge: Time Sync Drift</h3>
+                    <p><strong>Symptom:</strong> Incorrect timestamps, SV phase errors</p>
+                    <p><strong>Cause:</strong> PTP misconfiguration, network delays</p>
+                    <p><strong>Solution:</strong> Redundant grandmaster clocks, proper switch config, monitoring</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Challenge: Vendor Interoperability</h3>
+                    <p><strong>Symptom:</strong> Devices can't communicate despite IEC 61850 compliance</p>
+                    <p><strong>Cause:</strong> Different interpretations of standard, custom extensions</p>
+                    <p><strong>Solution:</strong> Early integration testing, conformance certification, clear specifications</p>
+                </div>
+                
+                <h3>Project Management Challenges</h3>
+                <ul>
+                    <li><strong>Underestimated Engineering Time:</strong> SCL configuration is time-consuming</li>
+                    <li><strong>Testing Complexity:</strong> End-to-end testing requires coordination</li>
+                    <li><strong>Documentation:</strong> Keeping ICD/SCD files synchronized</li>
+                    <li><strong>Training:</strong> Operations staff need IEC 61850 knowledge</li>
+                    <li><strong>Legacy Integration:</strong> Bridging to DNP3/Modbus systems</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>Success Factors</h2>
+                
+                <h3>Planning Phase</h3>
+                <ul>
+                    <li>✓ Clear functional specifications</li>
+                    <li>✓ Vendor IEC 61850 capability verification</li>
+                    <li>✓ Network architecture design review</li>
+                    <li>✓ Cybersecurity requirements defined</li>
+                </ul>
+                
+                <h3>Design Phase</h3>
+                <ul>
+                    <li>✓ Logical node allocation documented</li>
+                    <li>✓ GOOSE and SV signal lists created</li>
+                    <li>✓ Network bandwidth calculations</li>
+                    <li>✓ Redundancy strategy established</li>
+                </ul>
+                
+                <h3>Implementation Phase</h3>
+                <ul>
+                    <li>✓ Factory acceptance testing (FAT)</li>
+                    <li>✓ Site acceptance testing (SAT)</li>
+                    <li>✓ Commissioning procedures</li>
+                    <li>✓ Operations training delivered</li>
+                </ul>
+                
+                <h3>Operations Phase</h3>
+                <ul>
+                    <li>✓ Maintenance procedures documented</li>
+                    <li>✓ Network monitoring tools deployed</li>
+                    <li>✓ Regular cybersecurity audits</li>
+                    <li>✓ Ongoing staff training program</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            const clickedButton = event.target;
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
